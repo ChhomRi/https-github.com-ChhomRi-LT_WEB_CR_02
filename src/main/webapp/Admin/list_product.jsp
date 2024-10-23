@@ -16,7 +16,7 @@
 <div class="container">
     <h2> Danh sách sản phẩm</h2>
     <div class="mb-2 text-end">
-        <a href="#" class="btn btn-success"> <i class="bi bi-plus-circle"></i> Thêm mới</a>
+        <a href="ManageProduct?action=ADD" class="btn btn-success"> <i class="bi bi-plus-circle"></i> Thêm mới</a>
     </div>
 
     <table class="table table-bordered table-striped">
@@ -26,23 +26,21 @@
             <th>Hình ảnh</th>
             <th>Loại</th>
             <th>Action</th>
-        </tr>
+        </tr>  
         <%
             ArrayList<Hoa> dsHoa = (ArrayList<Hoa>) request.getAttribute("dsHoa");
-            for(Hoa x : dsHoa){
-            
-            
+            for (Hoa x : dsHoa) {
         %>
-        <tr>
-            <td>Name 1</td>
-            <td>Giá 1</td>
-            <td> <img src="../assets/images/product/<%=x.getHinh()%>" style="width: 100px">  </td>
-            <td>Loai 1</td>
+        <tr>    
+            <td><%=x.getTenhoa()%></td>
+            <td><%=x.getGia()%></td>
+            <td> <img src="assets/images/products/<%=x.getHinh()%>" style="width: 100px">  </td>
+            <td><%=x.getMaloai()%></td>
             <td>
-                <a href="#" class="btn btn-secondary"> <i class="bi bi-pencil-square"></i> Sửa</a>
-                <a href="#" class="btn btn-danger"> <i class="bi bi-trash"></i> Xoá</a>
+                <a href="ManageProduct?action=EDIT&mahoa=<%=x.getMahoa()%>" class="btn btn-secondary"> <i class="bi bi-pencil-square"></i> Sửa</a>
+                <a href="ManageProduct?action=DELETE&mahoa=<%=x.getMahoa()%>"  class="btn btn-danger"> <i class="bi bi-trash"></i> Xoá</a>
             </td>
-        </tr> 
+        </tr>       
         <%
             }
         %>
