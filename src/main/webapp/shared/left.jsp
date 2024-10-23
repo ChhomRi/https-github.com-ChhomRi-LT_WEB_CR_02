@@ -22,7 +22,7 @@
                 
             
             %>
-            <li class="list-group-item"><a class="text-decoration-none"href="products.jsp?maloai=<%=loai.getMaloai() %>">
+            <li class="list-group-item"><a class="text-decoration-none"href="product.jsp?maloai=<%=loai.getMaloai() %>">
               <%=loai.getTenloai() %></a></li>
             
             
