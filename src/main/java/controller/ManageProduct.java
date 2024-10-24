@@ -5,22 +5,21 @@
 package controller;
 
 import dao.HoaDAO;
+import dao.LoaiDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Hoa;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name = "ProductManage", urlPatterns = {"/ProductManage"})
-public class ProductManage extends HttpServlet {
+@WebServlet(name = "ManageProduct", urlPatterns = {"/ManageProduct"})
+public class ManageProduct extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,36 +34,44 @@ public class ProductManage extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            HoaDAO hoaDAO = new HoaDAO();
-            String action = "LIST";
-            if (request.getParameter("action") != null){
-                action = request.getParameter("action");
-            }
-            switch (action) {
+
+        HoaDAO hoaDAO = new HoaDAO();
+        LoaiDAO loaiDAO = new LoaiDAO();
+
+        String action = "LIST";
+        if (request.getParameter("action") != null) {
+            action = request.getParameter("action");
+        }
+
+        //xét các trường hợp của các chức năng
+        switch (action) {
             case "LIST":
-                ArrayList<Hoa> dsHoa =hoaDAO.getAll();
-                request.setAttribute("dsHoa", dsHoa);
+                //trả về giao diện liệt kê danh sách sản phẩm quản trị
+                //System.out.println("LIST");
+                request.setAttribute("dsHoa", hoaDAO.getAll()); //Chuyển dữ liệu cho JSP (VIEW)
                 request.getRequestDispatcher("Admin/list_product.jsp").forward(request, response);
                 break;
+
             case "ADD":
-                System.out.println("ADD");
+                //trả về giao diện thêm mới sản phảm
+                request.setAttribute("dsLoai", loaiDAO.getAll()); //Chuyển dữ liệu cho JSP (VIEW)
                 request.getRequestDispatcher("Admin/add_product.jsp").forward(request, response);
                 break;
+
             case "EDIT":
-                System.out.println("EDIT");
-                
+                //trả về giao diện cập nhật sản phảm
+                //System.out.println("EDIT");
+                request.getRequestDispatcher("Admin/edit_product.jsp").forward(request, response);
+
                 break;
-            case "UPDATE":
-                System.out.println("UPDATE");
-                
-                break;
+
             case "DELETE":
-                System.out.println("DELETE");
-                
+                //Xử lý xoá sản phẩm
+                //System.out.println("DELETE");
+                request.getRequestDispatcher("Admin/edit_product.jsp").forward(request, response);
                 break;
-        }
-           
+            default:
+                throw new AssertionError();
         }
     }
 
