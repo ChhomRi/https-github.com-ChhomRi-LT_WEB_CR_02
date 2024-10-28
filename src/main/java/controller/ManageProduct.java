@@ -8,17 +8,24 @@ import dao.HoaDAO;
 import dao.LoaiDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.sql.Date;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import model.Hoa;
 
 /**
  *
  * @author ADMIN
  */
 @WebServlet(name = "ManageProduct", urlPatterns = {"/ManageProduct"})
+@MultipartConfig
+
 public class ManageProduct extends HttpServlet {
 
     /**
@@ -53,9 +60,31 @@ public class ManageProduct extends HttpServlet {
                 break;
 
             case "ADD":
-                //trả về giao diện thêm mới sản phảm
-                request.setAttribute("dsLoai", loaiDAO.getAll()); //Chuyển dữ liệu cho JSP (VIEW)
-                request.getRequestDispatcher("Admin/add_product.jsp").forward(request, response);
+                String method = request.getMethod();
+                if (method.equals("GET")) {
+                    //trả về giao diện thêm mới sản phảm
+                    request.setAttribute("dsLoai", loaiDAO.getAll()); //Chuyển dữ liệu cho JSP (VIEW)
+                    request.getRequestDispatcher("Admin/add_product.jsp").forward(request, response);
+                } else if (method.equals("POST")) {
+                    String tenhoa = request.getParameter("tenhoa");
+                    double gia = Double.parseDouble(request.getParameter("gia"));
+                    Part part = request.getPart("hinh");
+                    int maloai = Integer.parseInt(request.getParameter("maloai"));
+
+                    String realPath = request.getServletContext().getRealPath("assets/images/products");
+                    String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                    part.write(realPath + "/" + filename);
+                    Hoa objInsert = new Hoa(0, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
+                    if (hoaDAO.Insert(objInsert)) {
+                        request.setAttribute("success", "Thao tác thêm sản phẩm thành công");
+
+                    } else {
+                        request.setAttribute("error", "Thao tác thêm sản phẩm thất bại");
+
+                    }
+                    request.getRequestDispatcher("ManageProduct?action=LIST").forward(request, response);
+                }
+
                 break;
 
             case "EDIT":
@@ -66,8 +95,11 @@ public class ManageProduct extends HttpServlet {
                 break;
 
             case "DELETE":
+                
                 //Xử lý xoá sản phẩm
                 //System.out.println("DELETE");
+                int mahoa = Integer.parseInt(request.getParameter("mahoa"));
+                if
                 request.getRequestDispatcher("Admin/edit_product.jsp").forward(request, response);
                 break;
             default:
