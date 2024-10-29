@@ -11,7 +11,21 @@
 <jsp:include page="../shared/header.jsp" />
 
 <jsp:include page="../shared/nav.jsp" />
+<%
+    if (request.getAttribute("success") != null) {
 
+
+%>
+<script>
+    Swal.fire({
+        title: "Good job!",
+        text: "<%=request.getAttribute("success")%>",
+        icon: "success"
+    });
+</script>
+<%
+    }
+%>
 
 <div class="container">
     <h2> Danh sách sản phẩm</h2>
@@ -38,7 +52,9 @@
             <td><%=x.getMaloai()%></td>
             <td>
                 <a href="ManageProduct?action=EDIT&mahoa=<%=x.getMahoa()%>" class="btn btn-secondary"> <i class="bi bi-pencil-square"></i> Sửa</a>
-                <a href="ManageProduct?action=DELETE&mahoa=<%=x.getMahoa()%>"  class="btn btn-danger"> <i class="bi bi-trash"></i> Xoá</a>
+                <a href="ManageProduct?action=DELETE&mahoa=<%=x.getMahoa()%>"  class="btn btn-danger"
+                   onclick="return confirm('Bạn có đồng ý xóa xóa sản phẩm chứ')"
+                   > <i class="bi bi-trash"></i> Xoá</a>
             </td>
         </tr>       
         <%

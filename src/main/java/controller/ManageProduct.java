@@ -41,6 +41,7 @@ public class ManageProduct extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
+        String method = request.getMethod();
 
         HoaDAO hoaDAO = new HoaDAO();
         LoaiDAO loaiDAO = new LoaiDAO();
@@ -60,7 +61,7 @@ public class ManageProduct extends HttpServlet {
                 break;
 
             case "ADD":
-                String method = request.getMethod();
+
                 if (method.equals("GET")) {
                     //trả về giao diện thêm mới sản phảm
                     request.setAttribute("dsLoai", loaiDAO.getAll()); //Chuyển dữ liệu cho JSP (VIEW)
@@ -90,20 +91,49 @@ public class ManageProduct extends HttpServlet {
             case "EDIT":
                 //trả về giao diện cập nhật sản phảm
                 //System.out.println("EDIT");
-                request.getRequestDispatcher("Admin/edit_product.jsp").forward(request, response);
+                if (method.equalsIgnoreCase("get")) {
+                    int mahoa = Integer.parseInt(request.getParameter("mahoa"));
+                    request.setAttribute("hoa", hoaDAO.getById(mahoa));
+                    request.setAttribute("dsLoai", loaiDAO.getAll());
+                    request.getRequestDispatcher("Admin/edit_product.jsp").forward(request, response);
+                } else if (method.equalsIgnoreCase("post")) {
+                    int mahoa = Integer.parseInt(request.getParameter("mahoa"));
+                    String tenhoa = request.getParameter("tenhoa");
+                    double gia = Double.parseDouble(request.getParameter("gia"));
+                    Part part = request.getPart("hinh");
+                    int maloai = Integer.parseInt(request.getParameter("maloai"));
+                    String filename = request.getParameter("oldImg");
+                    if (part.getSize() > 0) {
+                        String realPath = request.getServletContext().getRealPath("assets/images/products");
+                        filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                        part.write(realPath + "/" + filename);
+
+                    }
+                    Hoa objUpdate = new Hoa(0, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
+                    if (hoaDAO.Update(objUpdate)) {
+                        request.setAttribute("success", "Thao tác cập nhật sản phẩm của bạn đã thành công tốt đẹp");
+                    } else {
+                        request.setAttribute("error", "Thao tác cập nhật sản phẩm của bạn đã thất bại");
+                    }
+                }
+                request.getRequestDispatcher("ManageProduct?action=LIST").forward(request, response);
 
                 break;
 
             case "DELETE":
-                
+
                 //Xử lý xoá sản phẩm
                 //System.out.println("DELETE");
                 int mahoa = Integer.parseInt(request.getParameter("mahoa"));
-                if
-                request.getRequestDispatcher("Admin/edit_product.jsp").forward(request, response);
+                if (hoaDAO.Delete(mahoa)) {
+                    request.setAttribute("success", "Thao tác xóa sản phẩm của bạn đã thành công");
+
+                } else {
+                    request.setAttribute("error", "Thao tác xóa của bạn đã thất bạn không xóa được sản phẩm");
+                }
+                request.getRequestDispatcher("ManageProduct?action=LIST").forward(request, response);
                 break;
-            default:
-                throw new AssertionError();
+
         }
     }
 
