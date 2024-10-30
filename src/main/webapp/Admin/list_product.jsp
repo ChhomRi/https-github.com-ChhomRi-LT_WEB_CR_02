@@ -96,4 +96,4 @@
     </div>
 </div>
 
-<jsp:include page="../shared/footer.jsp" />
+<jsp:include page="../shared/footer.jsp" />   
