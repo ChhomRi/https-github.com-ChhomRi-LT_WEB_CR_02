@@ -11,6 +11,7 @@
 <jsp:include page="../shared/header.jsp" />
 
 <jsp:include page="../shared/nav.jsp" />
+
 <%
     if (request.getAttribute("success") != null) {
 
@@ -21,6 +22,22 @@
         title: "Good job!",
         text: "<%=request.getAttribute("success")%>",
         icon: "success"
+    });
+</script>
+<%
+    }
+%>
+
+<%
+    if (request.getAttribute("error") != null) {
+
+
+%>
+<script>
+    Swal.fire({
+        title: "Bad job!",
+        text: "<%=request.getAttribute("error")%>",
+        icon: "error"
     });
 </script>
 <%
@@ -53,7 +70,7 @@
             <td>
                 <a href="ManageProduct?action=EDIT&mahoa=<%=x.getMahoa()%>" class="btn btn-secondary"> <i class="bi bi-pencil-square"></i> Sửa</a>
                 <a href="ManageProduct?action=DELETE&mahoa=<%=x.getMahoa()%>"  class="btn btn-danger"
-                   onclick="return confirm('Bạn có đồng ý xóa xóa sản phẩm chứ')"
+                   onclick="return confirm('Bạn có đồng ý  xóa sản phẩm chứ')"
                    > <i class="bi bi-trash"></i> Xoá</a>
             </td>
         </tr>       
@@ -61,6 +78,22 @@
             }
         %>
     </table>
+    <div>
+        <ul class="pagination justify-content-center">
+            <%
+                int pageSum = (int) request.getAttribute("pageSum");
+                int pageIndex = (int) request.getAttribute("pageIndex");
+                for (int i = 1; i <= pageSum; i++) {
+
+            %>
+            <li class="page-item" >
+                <a href="ManageProduct?page=<%=i%>"class="page-link <%= pageIndex == i ? "active" : ""%>" > <%=i%></a>
+            </li>
+            <%
+                }
+            %>
+        </ul>
+    </div>
 </div>
 
 <jsp:include page="../shared/footer.jsp" />

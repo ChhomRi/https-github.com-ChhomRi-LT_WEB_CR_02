@@ -72,7 +72,25 @@ public class HoaDAO {
         return ds;
     }
 
-    //phuong thuc them mới sản phẩm (Hoa)
+    public ArrayList<Hoa> getPage(int pageIndex, int pageSize) {
+        ArrayList<Hoa> ds = new ArrayList<>();
+        String sql = "select * from Hoa order by mahoa OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        conn = DbContext.getConnection();
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, (pageIndex - 1) * pageSize);
+            ps.setInt(2, pageSize);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ds.add(new Hoa(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getDate(6)));
+            }
+        } catch (Exception ex) {
+            System.out.println("Loi:" + ex.toString());
+        }
+        return ds;
+    }
+
+    //Phương thức them mới sản phẩm (Hoa)
     public boolean Insert(Hoa hoa) {
         String sql = "insert into hoa (tenhoa,gia,hinh,maloai,ngaycapnhat) values (?,?,?,?,?)";
         conn = DbContext.getConnection();
@@ -93,7 +111,7 @@ public class HoaDAO {
         return false;
     }
 
-    //phuong thuc cập nhật sản phẩm (Hoa)
+    //Phương thức cập nhật sản phẩm (Hoa)
     public boolean Update(Hoa hoa) {
         String sql = "update hoa set tenhoa=?,gia=?,hinh=?,maloai=?,ngaycapnhat=? where mahoa=?";
         conn = DbContext.getConnection();
@@ -115,7 +133,7 @@ public class HoaDAO {
         return false;
     }
 
-    //phuong thuc xoá sản phẩm (Hoa)
+    //Phương thức xoá sản phẩm (Hoa)
     public boolean Delete(int mahoa) {
         String sql = "delete from hoa where mahoa=?";
         conn = DbContext.getConnection();
@@ -132,7 +150,7 @@ public class HoaDAO {
         return false;
     }
 
-    //phuong thuc lấy thông tin sản phẩm (Hoa) theo mã hoa 
+    //Phương thức lấy thông tin sản phẩm (Hoa) theo mã hoa 
     public Hoa getById(int mahoa) {
         Hoa kq = null;
         String sql = "select * from Hoa where mahoa=?";
@@ -152,24 +170,12 @@ public class HoaDAO {
 
     public static void main(String[] args) {
         HoaDAO hoaDao = new HoaDAO();
-        ArrayList<Hoa> dsHoa = hoaDao.getTop10();
-        System.out.println("Lay tat ca hoa");
-        ArrayList<Hoa> dshoa = hoaDao.getAll();
+        System.out.println("Lay trang 1");
+        int pageSize = 5;
+        ArrayList<Hoa> dsHoa = hoaDao.getPage(1, pageSize);
         for (Hoa hoa : dsHoa) {
             System.out.println(hoa);
-        }
-
-        dsHoa = hoaDao.getByCategoryId(2);
-        for (Hoa hoa : dsHoa) {
-            System.out.println(hoa);
-        }
-        //tìm hoa theo mahoa=1
-        System.out.println("Tim hoa co mahoa=1");
-        Hoa kq = hoaDao.getById(1);
-        if (kq != null) {
-            System.out.println(kq);
         }
 
     }
-
 }

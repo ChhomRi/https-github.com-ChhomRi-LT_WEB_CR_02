@@ -12,7 +12,7 @@
 <div class="container">
     
     <h2>Thêm sản phẩm (Hoa)</h2>    
-    <form method="post"enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
         <div class="mb-2">
             <label>Tên hoa</label>
             <input type="text" name="tenhoa" value="" required="" class="form-control" />

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -54,9 +55,16 @@ public class ManageProduct extends HttpServlet {
         //xét các trường hợp của các chức năng
         switch (action) {
             case "LIST":
-                //trả về giao diện liệt kê danh sách sản phẩm quản trị
-                //System.out.println("LIST");
-                request.setAttribute("dsHoa", hoaDAO.getAll()); //Chuyển dữ liệu cho JSP (VIEW)
+                int pageSize=5;
+                int pageIndex=1;
+                if(request.getParameter("page")!=null){
+                    pageIndex=Integer.parseInt(request.getParameter("page"));
+                }
+                int pageSum=(int) Math.ceil((double)hoaDAO.getAll().size()/pageSize);
+                ArrayList<Hoa> dsHoa=hoaDAO.getPage(pageIndex, pageSize);
+                request.setAttribute("dsHoa", dsHoa);
+                request.setAttribute("pageSum", pageSum);
+                request.setAttribute("pageIndex", pageIndex);
                 request.getRequestDispatcher("Admin/list_product.jsp").forward(request, response);
                 break;
 
@@ -109,7 +117,7 @@ public class ManageProduct extends HttpServlet {
                         part.write(realPath + "/" + filename);
 
                     }
-                    Hoa objUpdate = new Hoa(0, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
+                    Hoa objUpdate = new Hoa(mahoa, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
                     if (hoaDAO.Update(objUpdate)) {
                         request.setAttribute("success", "Thao tác cập nhật sản phẩm của bạn đã thành công tốt đẹp");
                     } else {
