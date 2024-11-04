@@ -79,19 +79,33 @@
         %>
     </table>
     <div>
-        <ul class="pagination justify-content-center">
+        <ul class ="pagination justify-content-center">
             <%
-                int pageSum = (int) request.getAttribute("pageSum");
+                //lấy tổng sớ trang từ Servlet
+                int pageSum= (int) request.getAttribute("pageSum");
                 int pageIndex = (int) request.getAttribute("pageIndex");
-                for (int i = 1; i <= pageSum; i++) {
+                for (int i = 1; i < pageSum; i++) {
+            %>
+            <li class="page-item <%= pageIndex == i ? "active" : ""%>"><a class="page-link" href="ManageProduct?page=<%=i%>"><%=i%></a></li>
+                <%
+                    }
+                %>
+        </ul>
 
-            %>
-            <li class="page-item" >
-                <a href="ManageProduct?page=<%=i%>"class="page-link <%= pageIndex == i ? "active" : ""%>" > <%=i%></a>
-            </li>
-            <%
-                }
-            %>
+        <ul class="pagination">
+            <li class="page-item <%=pageIndex == 1 ? "disabled" : ""%>">
+                <a class="page-link" href="ManageProduct?page=<%=pageIndex > 1 ? pageIndex - 1 : pageIndex%>">Previous</a></li>
+                <%
+                    for (int i = 1; i <= pageSum; i++) {
+                %>
+            <li class="page-item <%= pageIndex == i ? "active" : ""%>""><a class="page-link" href="ManageProduct?page=<%=i%>"><%=i%></a></li>
+                <%
+                    }
+                %>
+            <li class="page-item <%=pageIndex == pageSum ? "disabled" : ""%>">
+                <a class="page-link" href="ManageProduct?page=<%=pageIndex < pageSum ? pageIndex + 1 : pageIndex%>">Next</a></li>
+            <li class="page-item <%=pageIndex == pageSum ? "disabled" : ""%>">
+                <a class="page-link" href="ManageProduct?page=<%= pageSum%>">Last</a></li>
         </ul>
     </div>
 </div>
