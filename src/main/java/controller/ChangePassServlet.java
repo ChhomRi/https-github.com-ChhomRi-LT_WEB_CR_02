@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.TaiKhoanDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -11,10 +12,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import model.TaiKhoan;
 
 /**
  *
- * @author DELL
+ * @author admin
  */
 @WebServlet(name = "ChangePassServlet", urlPatterns = {"/ChangePassServlet"})
 public class ChangePassServlet extends HttpServlet {
@@ -31,21 +34,33 @@ public class ChangePassServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ChangePassServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ChangePassServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String oldpass = request.getParameter("oldpassword");
+        String newpass = request.getParameter("newpassword");
+        String confirmpass = request.getParameter("confirmpassword");
+        if (!newpass.equals(confirmpass)) {
+            request.setAttribute("error", "Mật khẩu mới với mật khẩu xác nhận không trùng");
+            request.getRequestDispatcher("changepass.jsp").forward(request, response);
+        }
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+
+        TaiKhoanDAO tkDAO = new TaiKhoanDAO();
+        TaiKhoan tk = tkDAO.checkLogin(username, oldpass);
+        if (tk != null) {
+            tk.setMatkhau(newpass);
+            if (tkDAO.Update(tk)) {
+                response.sendRedirect("home.jsp");
+            } else {
+                request.setAttribute("error", "Cập nhật không thành công");
+                request.getRequestDispatcher("changepass.jsp").forward(request, response);
+            }
+        } else {
+            request.setAttribute("error", "Mật khẩu cũ không đúng");
+            request.getRequestDispatcher("changepass.jsp").forward(request, response);
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

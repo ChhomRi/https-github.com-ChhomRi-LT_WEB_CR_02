@@ -37,6 +37,10 @@ public class TaiKhoan {
     public String toString() {
         return "TaiKhoan{" + "tendangnhap=" + tendangnhap + ", mkdangnhap=" + mkdangnhap + '}';
     }
+
+    public void setMatkhau(String newpass) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     
     
